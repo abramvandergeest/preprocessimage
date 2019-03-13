@@ -1,39 +1,41 @@
 package preprocessImage
 
-import "github.com/project-flogo/core/data/coerce"
+import (
+	"image"
+)
 
-type Settings struct {
-	ASetting string `md:"aSetting,required"`
-}
+// type Settings struct {
+// 	ASetting string `md:"aSetting,required"`
+// }
 
 type Input struct {
-	AnInput string `md:"anInput,required"`
+	Image image.Image `md:"image"`
 }
 
 func (r *Input) FromMap(values map[string]interface{}) error {
-	strVal, _ := coerce.ToString(values["anInput"])
-	r.AnInput = strVal
+	// strVal, _ := coerce.ToString(values["anInput"])
+	r.Image = values["image"].(image.Image)
 	return nil
 }
 
 func (r *Input) ToMap() map[string]interface{} {
 	return map[string]interface{}{
-		"anInput": r.AnInput,
+		"image": r.Image,
 	}
 }
 
 type Output struct {
-	AnOutput string `md:"anOutput"`
+	Output interface{} `md:"output"`
 }
 
 func (o *Output) FromMap(values map[string]interface{}) error {
-	strVal, _ := coerce.ToString(values["anOutput"])
-	o.AnOutput = strVal
+	// strVal, _ := coerce.ToString()
+	o.Output = values["output"]
 	return nil
 }
 
 func (o *Output) ToMap() map[string]interface{} {
 	return map[string]interface{}{
-		"anOutput": o.AnOutput,
+		"output": o.Output,
 	}
 }

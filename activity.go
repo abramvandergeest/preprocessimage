@@ -2,25 +2,24 @@ package preprocessImage
 
 import (
 	"github.com/project-flogo/core/activity"
-	"github.com/project-flogo/core/data/metadata"
 )
 
 func init() {
 	activity.Register(&Activity{}) //activity.Register(&Activity{}, New) to create instances using factory method 'New'
 }
 
-var activityMd = activity.ToMetadata(&Settings{}, &Input{}, &Output{})
+var activityMd = activity.ToMetadata(nil, &Input{}, &Output{})
 
 //New optional factory method, should be used if one activity instance per configuration is desired
 func New(ctx activity.InitContext) (activity.Activity, error) {
 
-	s := &Settings{}
-	err := metadata.MapToStruct(ctx.Settings(), s, true)
-	if err != nil {
-		return nil, err
-	}
+	// s := &Settings{}
+	// err := metadata.MapToStruct(ctx.Settings(), s, true)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
-	ctx.Logger().Debugf("Setting: %s", s.ASetting)
+	// ctx.Logger().Debugf("Setting: %s", s.ASetting)
 
 	act := &Activity{} //add aSetting to instance
 
@@ -45,9 +44,47 @@ func (a *Activity) Eval(ctx activity.Context) (done bool, err error) {
 		return true, err
 	}
 
-	ctx.Logger().Info("Input: %s", input.AnInput)
+	ctx.Logger().Info("Input: Image here.")
 
-	output := &Output{AnOutput: input.AnInput}
+	src := input.Image
+	batchsize := 1
+	// cs := 3
+
+	bounds := src.Bounds()
+	w, h := bounds.Max.X, bounds.Max.Y
+
+	// //Converting Image to array
+	var img [][][][]uint8
+	for j := 0; j < batchsize; j++ {
+		var batch [][][]uint8
+		for x := 0; x < w; x++ {
+			var row [][]uint8
+			for y := 0; y < h; y++ {
+				var col []uint8
+				for i := 0; i < 3; i++ {
+					col = append(col, 0)
+				}
+
+				row = append(row, col)
+			}
+			batch = append(batch, row)
+		}
+		img = append(img, batch)
+	}
+
+	for x := 0; x < w; x++ {
+		for y := 0; y < h; y++ {
+			imageColor := src.At(x, y)
+			rr, bb, gg, _ := imageColor.RGBA()
+			color := []uint8{uint8(rr / 256), uint8(bb / 255), uint8(gg / 256)}
+			for i := 0; i < 3; i++ {
+				img[0][x][y][i] = color[i]
+			}
+
+		}
+	}
+
+	output := &Output{Output: img}
 	err = ctx.SetOutputObject(output)
 	if err != nil {
 		return true, err
