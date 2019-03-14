@@ -1,4 +1,4 @@
-package preprocessImage
+package preprocessimage
 
 import (
 	"image"

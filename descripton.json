@@ -1,5 +1,5 @@
 {
-  "name": "preprocessImage",
+  "name": "preprocessimage",
   "type": "flogo:activity",
   "version": "0.0.1",
   "title": "preprocessImage",
