@@ -1,4 +1,4 @@
-module github.com/abramvandergeest/image_preprocess_activity
+module github.com/abramvandergeest/preprocessimage
 
 go 1.11
 
