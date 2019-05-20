@@ -55,11 +55,12 @@ func (a *Activity) Eval(ctx activity.Context) (done bool, err error) {
 		img = append(img, batch)
 	}
 
+	scale:= uint32(257)// RGBA scale factor
 	for x := 0; x < w; x++ {
 		for y := 0; y < h; y++ {
 			imageColor := src.At(x, y)
 			rr, bb, gg, _ := imageColor.RGBA()
-			color := []uint8{uint8(rr / 256), uint8(bb / 255), uint8(gg / 256)}
+			color := []uint8{uint8(rr / scale), uint8(bb / scale), uint8(gg / scale)}
 			for i := 0; i < 3; i++ {
 				img[0][x][y][i] = color[i]
 			}
